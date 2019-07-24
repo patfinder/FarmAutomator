@@ -1,0 +1,16 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\app\\components",
+    "\\app\\models",
+    "\\app\\models\\root-store",
+    "\\app\\navigation",
+    "\\app\\screens",
+    "\\app\\screens\\second-example-screen",
+    "\\app\\services",
+    "\\app\\services\\api"
+  ],
+  "SelectedNode": "\\app\\models\\root-store\\setup-root-store.ts",
+  "PreviewInSolutionExplorer": false
+}
