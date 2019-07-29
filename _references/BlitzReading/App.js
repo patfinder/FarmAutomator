@@ -14,6 +14,7 @@ import i18n from './src/i18n';
 
 import LoginScreen from './src/screens/LoginScreen';
 import CaptureScreen from './src/screens/CaptureScreen';
+import ScanQRScreen from './src/screens/ScanQRScreen';
 
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import PracticeScreen from './src/screens/PracticeScreen';
@@ -33,7 +34,7 @@ const HomeNavigator = createSwitchNavigator({
 const AppNavigator = createBottomTabNavigator(
     {
         Home: {
-            screen: CaptureScreen, // HomeNavigator
+            screen: ScanQRScreen, // HomeNavigator
             navigationOptions: {
                 tabBarLabel: ({ tintColor }) => (
                     <Text style={{ fontSize: 10, color: tintColor }}>
