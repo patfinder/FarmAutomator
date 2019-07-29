@@ -84,32 +84,26 @@ class CaptureScreen extends React.Component {
     }
 
     takePicture() {
-        this.cameraRef.current && this.cameraRef.current
-            .capture()
+
+        if (!this.cameraRef.current) return;
+
+        const options = { quality: 0.5, base64: true };
+        this.cameraRef.current.takePictureAsync(options)
             .then(data => {
-                //data is an object with the file path
-                //save the file to app  folder
-                this.saveImage(data.path);
-            })
-            .catch(err => {
-                console.error('capture picture error', err);
+                console.log('takePicture', data);
             });
     }
 
     render() {
-
-        var aa = RNCamera;
-        console.log('RNCamera', RNCamera);
-
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle="light-content" translucent />
 
                 <RNCamera
-                    captureTarget={RNCamera.constants.CaptureTarget.disk}
+                    //captureTarget={RNCamera.constants.CaptureTarget.disk}
+                    //aspect={RNCamera.constants.Aspect.fill}
                     ref={this.cameraRef}
                     style={styles.container}
-                    aspect={RNCamera.constants.Aspect.fill}
                     orientation="auto"
                 >
                     <View
