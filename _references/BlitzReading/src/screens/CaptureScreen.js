@@ -6,7 +6,10 @@ import {
     Dimensions,
     TouchableOpacity
 } from 'react-native';
-import Camera from 'react-native-camera';
+//import RNCamera from 'react-native-camera';
+//import { RNCamera } from 'react-native-camera';
+import { RNCamera } from 'react-native-camera';
+
 //import { Icon } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { dirPicutures } from './dirStorage';
@@ -44,6 +47,11 @@ class CaptureScreen extends React.Component {
         this.state = {
             orientation
         };
+
+        this.takePicture = this.takePicture.bind(this);
+        this.saveImage = this.saveImage.bind(this);
+
+        this.cameraRef = React.createRef();
     }
 
     componentWillMount() {
@@ -62,7 +70,7 @@ class CaptureScreen extends React.Component {
 
     // ************************** Capture and Save Image *************************
 
-    saveImage = async filePath => {
+    async saveImage(filePath) {
         try {
             // set new image name and filepath
             const newImageName = `${moment().format('DDMMYY_HHmmSSS')}.jpg`;
@@ -73,10 +81,10 @@ class CaptureScreen extends React.Component {
         } catch (error) {
             console.log(error);
         }
-    };
+    }
 
     takePicture() {
-        this.camera
+        this.cameraRef.current && this.cameraRef.current
             .capture()
             .then(data => {
                 //data is an object with the file path
@@ -89,17 +97,19 @@ class CaptureScreen extends React.Component {
     }
 
     render() {
+
+        var aa = RNCamera;
+        console.log('RNCamera', RNCamera);
+
         return (
             <View style={{ flex: 1 }}>
                 <StatusBar barStyle="light-content" translucent />
 
-                <Camera
-                    captureTarget={Camera.constants.CaptureTarget.disk}
-                    ref={cam => {
-                        this.camera = cam;
-                    }}
+                <RNCamera
+                    captureTarget={RNCamera.constants.CaptureTarget.disk}
+                    ref={this.cameraRef}
                     style={styles.container}
-                    aspect={Camera.constants.Aspect.fill}
+                    aspect={RNCamera.constants.Aspect.fill}
                     orientation="auto"
                 >
                     <View
@@ -139,7 +149,7 @@ class CaptureScreen extends React.Component {
                             />
                         </TouchableOpacity>
                     </View>
-                </Camera>
+                </RNCamera>
             </View>
         );
     }
