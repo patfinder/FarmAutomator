@@ -13,6 +13,7 @@ import reducers from './src/reducers';
 import i18n from './src/i18n';
 
 import LoginScreen from './src/screens/LoginScreen';
+import CaptureScreen from './src/screens/CaptureScreen';
 
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import PracticeScreen from './src/screens/PracticeScreen';
@@ -32,7 +33,7 @@ const HomeNavigator = createSwitchNavigator({
 const AppNavigator = createBottomTabNavigator(
     {
         Home: {
-            screen: LoginScreen, // HomeNavigator
+            screen: CaptureScreen, // HomeNavigator
             navigationOptions: {
                 tabBarLabel: ({ tintColor }) => (
                     <Text style={{ fontSize: 10, color: tintColor }}>

@@ -72,6 +72,8 @@ class LoginScreen extends React.Component {
             password: this.state.password,
         }
 
+        console.log('onLogin');
+
         this.setState({ loading: true });
 
         fetch('http://10.9.21.199:84/auth/login', {
@@ -81,29 +83,40 @@ class LoginScreen extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(login)
         })
-            .then(resp => {
+            .then(resp => Promise.all([resp, resp.json()]))
+            .then(([ resp, json ]) => {
+
+                setTimeout(() => null, 0);
+
+                //resp.json(json => {
+                this.setState({ loading: false });
+
                 let cookies = resp.headers.get('set-cookie');
-
                 // Get .AspNet.auth-cookie value
-                let authCookie = cookies.split(';')[0].split('=')[1];
+                let aspCookie = cookies.split(';').map(c => c.trim()).filter(c => c.indexOf('.AspNet.auth-cookie') === 0);
 
-                resp.json(json => {
-                    this.setState({ loading: false });
+                if (!aspCookie) throw '.AspNet.auth-cookie not found!';
 
-                    // Success
-                    if (json.ResultCode !== 0) {
-                        Alert.alert('Login unsuccess!');
-                        return;
-                    }
+                // Get cookie value
+                let authCookie = aspCookie[0].split('=')[1];
 
-                    // Store session token
-                    let { UserName: userName } = json;
-                    global.loginInfo = { userName, authCookie };
-                    Alert.alert('Login success!');
+                //Alert.alert('DEBUG. json', JSON.stringify({ authCookie, json }));
 
-                });
+                // Success
+                if (json.ResultCode !== 0) {
+                    Alert.alert('Login unsuccess!');
+                    return;
+                }
+
+                // Store session token
+                let { UserName: userName, Role: role } = json;
+                global.loginInfo = { userName, role, authCookie };
+                Alert.alert('Login success!');
             })
-            .catch(() => this.setState({ loading: false }));
+            .catch(error => {
+                this.setState({ loading: false });
+                console.log('Cautch error', error);
+            });
     }
 }
 
