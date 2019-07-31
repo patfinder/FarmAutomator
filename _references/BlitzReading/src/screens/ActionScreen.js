@@ -1,5 +1,8 @@
 import React from 'react';
-import { Keyboard, TextInput, View, ActivityIndicator, Alert, Picker } from 'react-native';
+import {
+    Keyboard, KeyboardType,
+    TextInput, View, Text, ActivityIndicator, Alert, Picker
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import i18n from '../i18n';
 import settings from '../settings';
@@ -19,7 +22,10 @@ class ActionScreen extends React.Component {
             feedType: null,
             //cattle: null,
             cattleFeedId: null,
+            quantity: 0,
         };
+
+        this.onQuantityChange = this.onQuantityChange.bind(this);
     }
 
     componentDidMount() {
@@ -35,13 +41,10 @@ class ActionScreen extends React.Component {
             })
             .then(res => {
 
-                var data = res.data;
-
-                var { cattles, feedTypes, feeds } = data;
+                var { data: { cattles, feedTypes, feeds } } = res;
+                this.setState({ cattles, feedTypes, feeds });
 
                 console.log('ActionScreen.componentDidMount', { cattles, feedTypes, feeds });
-
-                this.setState({ cattles, feedTypes, feeds });
             })
             .catch(error => {
                 Alert.alert('Error', JSON.stringify(error));
@@ -64,21 +67,46 @@ class ActionScreen extends React.Component {
         return (
             <View style={styles.container}>
                 <View style={styles.inputContainer}>
-                    <Picker
+                    <Text style={styles.captionCol}>Cattle</Text>
+                    <Picker style={styles.inputCol}
                         selectedValue={this.state.cattleFeedId}
-                        style={{ height: 50, width: 100 }}
+                        style={{ height: 50, width: 200 }}
                         onValueChange={(itemValue) =>
-                            this.setState({ cattleFeedId: itemValue })
+                            //this.setState({ cattleFeedId: itemValue })
+                            null
                         }>
-                        {cattleFeeds.map(cf => <Picker.Item key={cf.cattleFeedId} label={cf.cattleFeedName} value={cf.cattleFeedId} />)}
+                        {cattles.map(c => <Picker.Item key={c.id} label={c.name} value={c.id} />)}
                     </Picker>
+                    {
+                        //<Picker
+                        //    selectedValue={this.state.cattleFeedId}
+                        //    style={{ height: 50, width: 200 }}
+                        //    onValueChange={(itemValue) =>
+                        //        this.setState({ cattleFeedId: itemValue })
+                        //    }>
+                        //    {cattleFeeds.map(cf => <Picker.Item key={cf.cattleFeedId} label={cf.cattleFeedName} value={cf.cattleFeedId} />)}
+                        //</Picker>
+                    }
                 </View>
-                <View style={styles.practiceButtonContainer}>
-                    <Switch value={this.state.feedType} onValueChange={() => this.setState({ feedType: !Boolean(this.state.feedType) })} />
+                <View style={styles.inputContainer}>
+                    <View><Text>{this.state.feedType ? this.state.feedTypes[0] : this.state.feedTypes[1]}</Text></View>
+                    <View><Switch value={this.state.feedType} onValueChange={() => this.setState({ feedType: !Boolean(this.state.feedType) })} /></View>
                 </View>
-                <View style={styles.practiceButtonContainer}>
-                    <Button onPress={this.onLogin}>Login</Button>
-                </View>
+                <TextInput
+                    style={styles.textInput}
+                    placeholder={i18n.t('action.quantity_placeholder')}
+                    maxLength={20}
+                    keyboardType='numeric'
+                    onBlur={Keyboard.dismiss}
+                    value={this.state.quantity}
+                    onChangeText={this.onQuantityChange}
+                />
+
+                {
+                    //<View style={styles.practiceButtonContainer}>
+                    //    <Button onPress={this.onLogin}>Login</Button>
+                    //</View>
+                }
 
                 {/* Loading */}
                 {this.state.loading &&
@@ -89,14 +117,25 @@ class ActionScreen extends React.Component {
             </View>
         );
     }
+
+    onQuantityChange(val) {
+        if (!isNaN(val)) this.setState({ quantity: val.trim() });
+    }
 }
 
 const styles = {
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        justifyContent: 'flex-start',
+        alignItems: 'stretch'
     },
+    captionCol: {
+        width: '40%'
+    },
+    inputCol: {
+        width: '55%'
+    },
+
     textInput: {
         borderColor: '#CCCCCC',
         borderTopWidth: 1,

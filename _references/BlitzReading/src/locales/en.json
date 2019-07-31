@@ -9,6 +9,11 @@
         "name_placeholder": "User name",
         "password_placeholder": "Password"
     },
+    "action": {
+        "quantity_placeholder": "Quantity",
+        //"password_placeholder": "Password"
+    },
+
 
 
 
