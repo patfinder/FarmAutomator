@@ -1,9 +1,10 @@
 import React from 'react';
-import { Keyboard, TextInput, View, ActivityIndicator, Alert } from 'react-native';
+import { Keyboard, TextInput, View, ActivityIndicator, Alert, Picker } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import i18n from '../i18n';
 import settings from '../settings';
 import { Button } from '../components/common';
+import { Switch } from 'react-native-gesture-handler';
 
 class ActionScreen extends React.Component {
 
@@ -16,11 +17,9 @@ class ActionScreen extends React.Component {
             feeds: null,
 
             feedType: null,
-            cattle: null,
-            feed: null,
+            //cattle: null,
+            cattleFeedId: null,
         };
-
-        this.handleNameChange = this.handleNameChange.bind(this);
     }
 
     componentDidMount() {
@@ -31,11 +30,18 @@ class ActionScreen extends React.Component {
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
         })
-            .then(data => data.json())
-            .then(data => {
-                this.cattles = data.Cattles;
-                this.feedTypes = data.FeedTypes;
-                this.feeds = data.Feeds;
+            .then(res => {
+                return res.json();
+            })
+            .then(res => {
+
+                var data = res.data;
+
+                var { cattles, feedTypes, feeds } = data;
+
+                console.log('ActionScreen.componentDidMount', { cattles, feedTypes, feeds });
+
+                this.setState({ cattles, feedTypes, feeds });
             })
             .catch(error => {
                 Alert.alert('Error', JSON.stringify(error));
@@ -44,32 +50,31 @@ class ActionScreen extends React.Component {
 
     render() {
 
-        var { cattles, feedTypes, feeds } = this.state;
+        var { cattles, feeds } = this.state; // feedTypes
 
-        var cattleFeeds = cattles.map(c => feedTypes.map(f => ({ ...f, cattleId: c.Id })).flat();
+        if (!cattles || !feeds) return null;
+
+        var cattleFeeds = cattles.map(c => feeds.map(f => ({
+            ...f,
+            cattleId: c.id,
+            cattleFeedId: `${c.id} - ${f.id}`,
+            cattleFeedName: `${c.name} - ${f.name}`
+        }))).flat();
 
         return (
             <View style={styles.container}>
                 <View style={styles.inputContainer}>
                     <Picker
-                        selectedValue={this.state.feedType}
+                        selectedValue={this.state.cattleFeedId}
                         style={{ height: 50, width: 100 }}
                         onValueChange={(itemValue) =>
-                            this.setState({ feedType: itemValue })
+                            this.setState({ cattleFeedId: itemValue })
                         }>
-                        <Picker.Item label="Java" value="java" />
-                        <Picker.Item label="JavaScript" value="js" />
+                        {cattleFeeds.map(cf => <Picker.Item key={cf.cattleFeedId} label={cf.cattleFeedName} value={cf.cattleFeedId} />)}
                     </Picker>
                 </View>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder={i18n.t('login.password_placeholder')}
-                        maxLength={40}
-                        onBlur={Keyboard.dismiss}
-                        value={this.state.password}
-                        onChangeText={this.handlePasswordChange}
-                    />
+                <View style={styles.practiceButtonContainer}>
+                    <Switch value={this.state.feedType} onValueChange={() => this.setState({ feedType: !Boolean(this.state.feedType) })} />
                 </View>
                 <View style={styles.practiceButtonContainer}>
                     <Button onPress={this.onLogin}>Login</Button>
@@ -84,10 +89,6 @@ class ActionScreen extends React.Component {
             </View>
         );
     }
-
-    //handleNameChange(userName) {
-    //    this.setState({ userName });
-    //}
 }
 
 const styles = {

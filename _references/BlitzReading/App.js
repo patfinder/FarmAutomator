@@ -13,6 +13,8 @@ import reducers from './src/reducers';
 import i18n from './src/i18n';
 
 import LoginScreen from './src/screens/LoginScreen';
+import ActionScreen from './src/screens/ActionScreen';
+
 import ScanQRScreen from './src/screens/ScanQRScreen';
 import CaptureScreen from './src/screens/CaptureScreen';
 
@@ -25,16 +27,21 @@ import SplashScreen from './src/screens/SplashScreen';
 
 const HomeNavigator = createSwitchNavigator({
     Welcome: WelcomeScreen,
+    Login: LoginScreen,
+    Action: ActionScreen,
+
+
     Practice: PracticeScreen,
     Results: ResultsScreen
 });
 
 /* eslint-disable react/display-name */
 
+//const AppNavigator = createBottomTabNavigator(
 const AppNavigator = createBottomTabNavigator(
     {
         Home: {
-            screen: ScanQRScreen, // HomeNavigator
+            screen: HomeNavigator, // HomeNavigator
             navigationOptions: {
                 tabBarLabel: ({ tintColor }) => (
                     <Text style={{ fontSize: 10, color: tintColor }}>

@@ -14,7 +14,10 @@ class WelcomeScreen extends React.Component {
           </Text>
         </View>
         <View style={styles.practiceButtonContainer}>
-          <Button onPress={() => this.props.navigation.navigate('Practice')}>
+                <Button
+                    //onPress={() => this.props.navigation.navigate('Practice')}
+                    onPress={() => this.props.navigation.navigate('Login')}
+                >
             <Icon name="play" size={22} />
           </Button>
         </View>

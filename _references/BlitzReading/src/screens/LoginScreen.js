@@ -68,12 +68,15 @@ class LoginScreen extends React.Component {
 
     onLogin() {
 
+        // TODO
+        //var login = {
+        //    userName: this.state.userName,
+        //    password: this.state.password,
+        //}
         var login = {
-            email: this.state.userName,
-            password: this.state.password,
+            userName: 'User 1',
+            password: 'password',
         }
-
-        console.log('onLogin');
 
         this.setState({ loading: true });
 
@@ -84,7 +87,9 @@ class LoginScreen extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(login)
         })
-            .then(resp => Promise.all([resp, resp.json()]))
+            .then(resp => {
+                return Promise.all([resp, resp.json()]);
+            })
             .then(([ resp, json ]) => {
 
                 setTimeout(() => null, 0);
@@ -104,15 +109,17 @@ class LoginScreen extends React.Component {
                 //Alert.alert('DEBUG. json', JSON.stringify({ authCookie, json }));
 
                 // Success
-                if (json.ResultCode !== 0) {
+                if (json.resultCode !== 'Success') {
                     Alert.alert('Login unsuccess!');
                     return;
                 }
 
                 // Store session token
-                let { UserName: userName, Role: role } = json;
-                global.loginInfo = { userName, role, authCookie };
-                Alert.alert('Login success!');
+                let { id, name, role} = json.data;
+                global.loginInfo = { id, name, role, authCookie };
+
+                //Alert.alert('Login success!');
+                this.props.navigation.navigate('Action')
             })
             .catch(error => {
                 this.setState({ loading: false });
