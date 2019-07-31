@@ -2,6 +2,7 @@ import React from 'react';
 import { Keyboard, TextInput, View, ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import i18n from '../i18n';
+import settings from '../settings';
 import { Button } from '../components/common';
 
 class LoginScreen extends React.Component {
@@ -76,7 +77,7 @@ class LoginScreen extends React.Component {
 
         this.setState({ loading: true });
 
-        fetch('http://10.9.21.199:84/auth/login', {
+        fetch(`${settings.API.API_ROOT}${settings.API.AUTH.LOGIN}`, {
             method: 'POST',
             mode: 'cors',
             credentials: 'include',

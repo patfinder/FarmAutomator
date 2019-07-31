@@ -13,8 +13,8 @@ import reducers from './src/reducers';
 import i18n from './src/i18n';
 
 import LoginScreen from './src/screens/LoginScreen';
-import CaptureScreen from './src/screens/CaptureScreen';
 import ScanQRScreen from './src/screens/ScanQRScreen';
+import CaptureScreen from './src/screens/CaptureScreen';
 
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import PracticeScreen from './src/screens/PracticeScreen';
