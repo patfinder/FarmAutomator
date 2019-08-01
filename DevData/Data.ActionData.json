@@ -1,0 +1,38 @@
+{
+    "resultCode": "Success",
+    "errorMessages": [],
+    "data": {
+        "lastUpdate": "2019-08-01T17:31:15.9363515+07:00",
+        "cattles": [
+            {
+                "id": "big 1",
+                "name": "big 1 name"
+            },
+            {
+                "id": "big 2",
+                "name": "big 2 name"
+            }
+        ],
+        "feedTypes": [
+            "Food",
+            "Medicine"
+        ],
+        "feeds": [
+            {
+                "id": "medium 1",
+                "name": "medium 1 name",
+                "feedType": "Food"
+            },
+            {
+                "id": "medium 2",
+                "name": "medium 1 name",
+                "feedType": "Food"
+            },
+            {
+                "id": "medium 3",
+                "name": "medium 3 name",
+                "feedType": "Food"
+            }
+        ]
+    }
+}
