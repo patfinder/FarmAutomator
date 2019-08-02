@@ -1,32 +1,38 @@
 import React from 'react';
 import {
     Keyboard, KeyboardType,
-    TextInput, View, Text, ActivityIndicator, Alert, Picker
+    TextInput, View, Text, ActivityIndicator, Alert, Picker,
+    ListView, SectionList, 
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import i18n from '../i18n';
 import settings from '../settings';
 //import { Button } from '../components/common';
 import { Switch } from 'react-native-gesture-handler';
+
+
 import {
     Container, Header, Footer, FooterTab, Content,
-    Left, Right, Body,
+    Left, Right, Body, List,
     Form, Item, Label, Input,
     Title, Accordion, Button, Segment,
+    SwipeRow, 
 } from "native-base";
 
 import { Grid, Row, Col } from "react-native-easy-grid";
 
-const dataArray = [
-    { title: "First Element", content: "Lorem ipsum dolor sit amet" },
-    { title: "Second Element", content: "Lorem ipsum dolor sit amet" },
-    { title: "Third Element", content: "Lorem ipsum dolor sit amet" }
+const datas = [
+    "Simon Mignolet",
+    "Nathaniel Clyne",
+    "Dejan Lovren",
 ];
 
 class ActionScreen extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
         this.state = {
             cattles: null,
@@ -37,10 +43,15 @@ class ActionScreen extends React.Component {
             feedId: null,
             feedType: null,
             quantity: 0,
+
+
+            listViewData: datas
         };
 
         this.toggleFeedType = this.toggleFeedType.bind(this);
         this.onQuantityChange = this.onQuantityChange.bind(this);
+        this.deleteRow = this.deleteRow.bind(this);
+        this.onScanCage = this.onScanCage.bind(this);
     }
 
     componentDidMount() {
@@ -84,7 +95,7 @@ class ActionScreen extends React.Component {
         //}))).flat();
 
         return (
-            <Container>
+            <Container style={styles.container}>
                 <Header>
                     <Left />
                     <Body>
@@ -94,54 +105,69 @@ class ActionScreen extends React.Component {
                 </Header>
                 <Content>
                     <Form>
-                        <Grid style={{height: 200}}>
-                            <Row>
-                                {/*<Item>*/}
-                                    {/* Cattle */}
-                                    <Picker
-                                        mode="dropdown"
-                                        iosIcon={<Icon name="arrow-down" />}
-                                        //style={{ width: undefined }}
-                                        placeholder="Select Cattle"
-                                        placeholderStyle={{ color: "#bfc6ea" }}
-                                        placeholderIconColor="#007aff"
-                                        selectedValue={this.state.cattleId}
-                                        onValueChange={(val) => this.setState({ cattleId: val })}
-                                    >
-                                        {cattles.map(cattle => <Picker.Item key={cattle.id} label={cattle.name} value={cattle.id} />)}
-                                    </Picker>
-                                {/*</Item>*/}
-                            </Row>
-                            <Row>
-                                {/*<Item>*/}
-                                    {/* Feed */}
-                                    <Picker
-                                        mode="dropdown"
-                                        iosIcon={<Icon name="arrow-down" />}
-                                        //style={{ width: undefined }}
-                                        placeholder="Select Cattle"
-                                        placeholderStyle={{ color: "#bfc6ea" }}
-                                        placeholderIconColor="#007aff"
-                                        selectedValue={this.state.feedId}
-                                        onValueChange={(val) => this.setState({ feedId: val })}
-                                    >
-                                        {feeds.map(feed => <Picker.Item key={feed.id} label={feed.name} value={feed.id} />)}
-                                    </Picker>
-                                {/*</Item>*/}
-                            </Row>
-                            <Row>
-                                {/*<Item>*/}
-                                    {/* FeedType */}
-                                    <Segment>
-                                        <Button first active={this.state.feedType === this.state.feedTypes[0]} onPress={this.toggleFeedType}><Text>{feedTypes[0]}</Text></Button>
-                                        <Button last active={this.state.feedType === this.state.feedTypes[1]} onPress={this.toggleFeedType}><Text>{feedTypes[1]}</Text></Button>
-                                    </Segment>
-                                {/*</Item>*/}
-                            </Row>
-                        </Grid>
+                        {/* Cattle */}
+                        <Picker
+                            mode="dropdown"
+                            iosIcon={<Icon name="arrow-down" />}
+                            //style={{ width: undefined }}
+                            placeholder="Select Cattle"
+                            placeholderStyle={{ color: "#bfc6ea" }}
+                            placeholderIconColor="#007aff"
+                            selectedValue={this.state.cattleId}
+                            onValueChange={(val) => this.setState({ cattleId: val })}
+                        >
+                            {cattles.map(cattle => <Picker.Item key={cattle.id} label={cattle.name} value={cattle.id} />)}
+                        </Picker>
+
+                        {/* Feed */}
+                        <Picker
+                            mode="dropdown"
+                            iosIcon={<Icon name="arrow-down" />}
+                            //style={{ width: undefined }}
+                            placeholder="Select Cattle"
+                            placeholderStyle={{ color: "#bfc6ea" }}
+                            placeholderIconColor="#007aff"
+                            selectedValue={this.state.feedId}
+                            onValueChange={(val) => this.setState({ feedId: val })}
+                        >
+                            {feeds.map(feed => <Item key={feed.id} label={feed.name} value={feed.id} />)}
+                        </Picker>
+
+                        {/* FeedType */}
+                        <Segment>
+                            <Button first active={this.state.feedType === this.state.feedTypes[0]} onPress={this.toggleFeedType}><Text>{feedTypes[0]}</Text></Button>
+                            <Button last active={this.state.feedType === this.state.feedTypes[1]} onPress={this.toggleFeedType}><Text>{feedTypes[1]}</Text></Button>
+                        </Segment>
+
+                        {/* Qualtity */}
+                        <Input>
+                        </Input>
+
+                        {/* Scan List */}
+                        <SectionList
+
+                            sections={[
+                                { title: 'Title1', data: ['item1', 'item2'] },
+                                { title: 'Title2', data: ['item3', 'item4'] },
+                                { title: 'Title3', data: ['item5', 'item6'] },
+                            ]}
+                            keyExtractor={(item, index) => item + index}
+
+
+                            renderSectionHeader={({ section: { title } }) => (
+                                <Text style={{ fontWeight: 'bold' }}>{title}</Text>
+                            )}
+
+                            renderItem={({ item, index, section }) => <Text key={index}>{item}</Text>}
+                        />
+
+                        <Item>
+                            <Button onPress={this.onScanCage}><Text>Scan Cage</Text></Button>
+                        </Item>
 
                     </Form>
                 </Content>
+
                 <Footer>
                     <FooterTab>
                         <Button full>
@@ -165,6 +191,17 @@ class ActionScreen extends React.Component {
 
     onQuantityChange(val) {
         if (!isNaN(val)) this.setState({ quantity: val.trim() });
+    }
+
+    deleteRow(secId, rowId, rowMap) {
+        rowMap[`${secId}${rowId}`].props.closeRow();
+        const newData = [...this.state.listViewData];
+        newData.splice(rowId, 1);
+        this.setState({ listViewData: newData });
+    }
+
+    onScanCage() {
+        this.props.navigation.navigate('ActionDetails');
     }
 }
 

@@ -1,13 +1,16 @@
-# Blitz Reading
+# Farm Automation App
 
-The mobile application which helps to practice and track the amount of sights words a kid can read.
+Support automating tasks of Pig Farm
 
-The development process is described in the ["What did I learn" blog](http://whatdidilearn.info/tags#BlitzReading).
 
-## Example
+# Dev Notes
 
-![App Example](app-example.gif)
+## jetifier
+The jetifier AndroidX transition tool in npm format, with a react-native compatible style
+Fix Android X transition related issues, like "Failed to resolve: support-v4"
 
-## License
+# License
 
 [MIT](LICENSE)
+
+

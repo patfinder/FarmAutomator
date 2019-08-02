@@ -13,7 +13,9 @@
         "quantity_placeholder": "Quantity",
         //"password_placeholder": "Password"
     },
-
+    "action_details": {
+        "qr_code": "QR Code",
+    },
 
 
 

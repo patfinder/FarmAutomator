@@ -2,6 +2,7 @@ import React from 'react';
 import { Text } from 'react-native';
 import {
     createSwitchNavigator,
+    createStackNavigator,
     createBottomTabNavigator,
     createAppContainer
 } from 'react-navigation';
@@ -24,11 +25,17 @@ import ResultsScreen from './src/screens/ResultsScreen';
 import HighScoresScreen from './src/screens/HighScoresScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import SplashScreen from './src/screens/SplashScreen';
+import ActionDetailsScreen from './src/screens/ActionDetailsScreen';
+
+const ActionNavigator = createStackNavigator({
+    Action: ActionScreen,
+    ActionDetails: ActionDetailsScreen,
+});
 
 const HomeNavigator = createSwitchNavigator({
     Welcome: WelcomeScreen,
     Login: LoginScreen,
-    Action: ActionScreen,
+    Action: ActionNavigator,
 
 
     Practice: PracticeScreen,
