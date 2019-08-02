@@ -5,7 +5,7 @@ module.exports = {
     },
     "settings": {
         "react": {
-            "version": "16.3.1"
+            "version": "16.8.3"
         }
     },
     "extends": ["eslint:recommended", "plugin:react/recommended"],

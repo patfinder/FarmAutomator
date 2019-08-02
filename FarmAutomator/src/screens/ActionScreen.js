@@ -140,8 +140,14 @@ class ActionScreen extends React.Component {
                         </Segment>
 
                         {/* Qualtity */}
-                        <Input>
-                        </Input>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder={i18n.t('action.quantity_placeholder')}
+                            maxLength={40}
+                            onBlur={Keyboard.dismiss}
+                            value={this.state.quantity}
+                            onChangeText={this.onQuantityChange}
+                        />
 
                         {/* Scan List */}
                         <SectionList
@@ -194,6 +200,7 @@ class ActionScreen extends React.Component {
     }
 
     deleteRow(secId, rowId, rowMap) {
+        // TODO: delete
         rowMap[`${secId}${rowId}`].props.closeRow();
         const newData = [...this.state.listViewData];
         newData.splice(rowId, 1);
