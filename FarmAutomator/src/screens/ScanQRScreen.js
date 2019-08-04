@@ -1,40 +1,76 @@
 import React from 'react';
 import {
-    StyleSheet,
-    Text,
+    Keyboard, KeyboardType,
+    TextInput, View, Text, ActivityIndicator, Alert, Picker,
+    ListView, SectionList,
     TouchableOpacity,
-    Linking,
+    Linking, StyleSheet,
 } from 'react-native';
 
+import {
+    Container, Header, Footer, FooterTab, Content,
+    Left, Right, Body, List,
+    Form, Item, Label, Input,
+    Title, Accordion, Button, Segment,
+    SwipeRow,
+} from "native-base";
+
 import QRCodeScanner from 'react-native-qrcode-scanner';
+import console = require('console');
 
 class ScanQRScreen extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.onSuccess = this.onSuccess.bind(this);
-    }
+        this.state = {
+            qr: '',
+            scanned: false,
+        }
 
-    onSuccess(e){
-        Linking
-            .openURL(e.data)
-            .catch(err => console.error('An error occured', err));
+        this.onScanQrSuccess = this.onScanQrSuccess.bind(this);
     }
 
     render() {
         return (
-            <QRCodeScanner
-                onRead={this.onSuccess}
-                topContent={
-                    <Text style={styles.centerText}>Please scan cage the QR code</Text>
-                }
-            />
+            <Container style={styles.container}>
+                <QRCodeScanner
+                    onRead={this.onScanQrSuccess}
+                    topContent={
+                        <Text style={styles.centerText}>Please scan cage QR code</Text>
+                    }
+                />
+            </Container>
         );
     }
-}
+
+    onScanQrSuccess(evt) {
+
+        console.lo('ScanQRScreen.onScanQrSuccess', evt);
+        this.props.onQrScanned(evt.data);
+        this.props.navigation.goBack();
+
+        //Linking
+        //    .openURL(evt.data)
+        //    .catch(err => console.error('An error occured', err));
+    }}
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'stretch'
+    },
+    textInput: {
+        borderColor: '#CCCCCC',
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        height: 50,
+        width: '80%',
+        fontSize: 25,
+        paddingLeft: 20,
+        paddingRight: 20
+    },
     centerText: {
         flex: 1,
         fontSize: 18,

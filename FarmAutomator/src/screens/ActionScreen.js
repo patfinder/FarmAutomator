@@ -2,7 +2,7 @@ import React from 'react';
 import {
     Keyboard, KeyboardType,
     TextInput, View, Text, ActivityIndicator, Alert, Picker,
-    ListView, SectionList, 
+    ListView, SectionList, StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import i18n from '../i18n';
@@ -145,7 +145,7 @@ class ActionScreen extends React.Component {
                             placeholder={i18n.t('action.quantity_placeholder')}
                             maxLength={40}
                             onBlur={Keyboard.dismiss}
-                            value={this.state.quantity}
+                            value={this.state.quantity.toString()}
                             onChangeText={this.onQuantityChange}
                         />
 
@@ -212,7 +212,7 @@ class ActionScreen extends React.Component {
     }
 }
 
-const styles = {
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'flex-start',
@@ -252,6 +252,6 @@ const styles = {
         width: '95%',
         marginBottom: 30
     }
-};
+});
 
 export default ActionScreen;

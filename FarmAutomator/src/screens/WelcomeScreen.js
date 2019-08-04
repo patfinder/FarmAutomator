@@ -10,7 +10,7 @@ class WelcomeScreen extends React.Component {
       <View style={styles.container}>
         <View style={styles.welcomeMessageContainer}>
           <Text style={styles.welcomeMessage}>
-            {i18n.t('home.welcome', { appName: i18n.t('appName')})}
+            {i18n.t('home.welcome', { appName: i18n.t('appName')})} AA BB
           </Text>
         </View>
         <View style={styles.practiceButtonContainer}>

@@ -30,6 +30,7 @@ import ActionDetailsScreen from './src/screens/ActionDetailsScreen';
 const ActionNavigator = createStackNavigator({
     Action: ActionScreen,
     ActionDetails: ActionDetailsScreen,
+    ScanQr: ScanQRScreen,
 });
 
 const HomeNavigator = createSwitchNavigator({

@@ -12,7 +12,7 @@ class LoginScreen extends React.Component {
 
         this.state = {
             loading: false,
-            userName: '',
+            userName: '1',
             password: '',
         };
 
