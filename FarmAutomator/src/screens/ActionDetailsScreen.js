@@ -14,7 +14,7 @@ import {
     Form, Item, Label, Input,
     Title, Accordion, Button, Segment,
     SwipeRow,
-    CardItem,
+    Card, CardItem,
 } from "native-base";
 
 import { Grid, Row, Col } from "react-native-easy-grid";
@@ -66,7 +66,7 @@ class ActionDetailsScreen extends React.Component {
                     {this.state.picturePaths.map((picturePath, index) => (
                         <Card>
                             <CardItem cardBody>
-                                <Image key={picturePath} source={{ uri: picturePath }} style={{ width: '100%'}} />
+                                <Image key={picturePath} source={{ uri: picturePath }} style={{ height: 200, width: null, flex: 1 }} />
                             </CardItem>
                             <CardItem>
                                 <Button onPress={() => this.onRemovePicture(index)}><Text>Remove</Text></Button>
