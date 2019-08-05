@@ -5,6 +5,7 @@ import {
     ListView, SectionList, 
     TouchableOpacity,
     Linking, StyleSheet,
+    Image,
 } from 'react-native';
 
 import {
@@ -13,6 +14,7 @@ import {
     Form, Item, Label, Input,
     Title, Accordion, Button, Segment,
     SwipeRow,
+    CardItem,
 } from "native-base";
 
 import { Grid, Row, Col } from "react-native-easy-grid";
@@ -28,11 +30,14 @@ class ActionDetailsScreen extends React.Component {
 
         this.state = {
             qr: '',
-            scanned: false,
+            picturePaths: [],
         };
 
-        this.onScanCage = this.onScanCage.bind(this);
-        this.onScanQrSuccess = this.onScanQrSuccess.bind(this);
+        this.onScanQr = this.onScanQr.bind(this);
+        this.onScanQrCallback = this.onScanQrCallback.bind(this);
+        this.onTakePicture = this.onTakePicture.bind(this);
+        this.onTakePictureCallback = this.onTakePictureCallback.bind(this);
+        this.onRemovePicture = this.onRemovePicture.bind(this);
     }
 
     render() {
@@ -55,25 +60,47 @@ class ActionDetailsScreen extends React.Component {
                         value={this.state.qr}
                         onChangeText={(val) => this.setState({qr: val})}
                     />
-                    <Button onPress={this.onScanCage}><Text>Scan QR</Text></Button>
+
+                    <Button onPress={this.onScanQr}><Text>Scan QR</Text></Button>
+
+                    {this.state.picturePaths.map((picturePath, index) => (
+                        <Card>
+                            <CardItem cardBody>
+                                <Image key={picturePath} source={{ uri: picturePath }} style={{ width: '100%'}} />
+                            </CardItem>
+                            <CardItem>
+                                <Button onPress={() => this.onRemovePicture(index)}><Text>Remove</Text></Button>
+                            </CardItem>
+                        </Card>
+                    ))}
+
+                    <Button onPress={this.onTakePicture}><Text>Take Picture</Text></Button>
 
                 </Content>
             </Container>
         );
     }
 
-    onScanCage(evt) {
-        this.props.navigation.navigate('ScanQr');
+    onScanQr(evt) {
+        this.props.navigation.navigate('ScanQr', { onScanQrCallback: this.onScanQrCallback });
     }
 
-    onScanQrSuccess(evt) {
+    onScanQrCallback(qr) {
+        this.setState({ qr });
+    }
 
-        console.log(evt);
-        this.setState({ qr: e.data });
+    onTakePicture(evt) {
+        this.props.navigation.navigate('TakePicture', { onTakePictureCallback: this.onTakePictureCallback });
+    }
+            
+    onTakePictureCallback(picturePath) {
+        this.setState({ picturePaths: [...this.state.picturePaths, picturePath] });
+    }
 
-        //Linking
-        //    .openURL(evt.data)
-        //    .catch(err => console.error('An error occured', err));
+    onRemovePicture(index) {
+        var pics = [...this.state.picturePaths];
+        pics.splice(index, 1);
+        this.setState({ picturePaths: [...pics] });
     }
 }
 

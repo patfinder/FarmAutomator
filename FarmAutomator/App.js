@@ -31,6 +31,7 @@ const ActionNavigator = createStackNavigator({
     Action: ActionScreen,
     ActionDetails: ActionDetailsScreen,
     ScanQr: ScanQRScreen,
+    TakePicture: CaptureScreen,
 });
 
 const HomeNavigator = createSwitchNavigator({

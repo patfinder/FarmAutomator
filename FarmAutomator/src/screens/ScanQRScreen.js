@@ -16,7 +16,6 @@ import {
 } from "native-base";
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import console = require('console');
 
 class ScanQRScreen extends React.Component {
 
@@ -29,6 +28,7 @@ class ScanQRScreen extends React.Component {
         }
 
         this.onScanQrSuccess = this.onScanQrSuccess.bind(this);
+        this.onTestGoBack = this.onTestGoBack.bind(this);
     }
 
     render() {
@@ -39,21 +39,32 @@ class ScanQRScreen extends React.Component {
                     topContent={
                         <Text style={styles.centerText}>Please scan cage QR code</Text>
                     }
+                    bottomContent={
+                        <Button onPress={this.onTestGoBack}><Text>Test1</Text></Button>
+                    }
                 />
+
+
             </Container>
         );
     }
 
     onScanQrSuccess(evt) {
 
-        console.lo('ScanQRScreen.onScanQrSuccess', evt);
-        this.props.onQrScanned(evt.data);
+        console.log('ScanQRScreen.onScanQrSuccess', evt);
+        this.props.navigation.state.params.onScanQrCallback(evt.data);
         this.props.navigation.goBack();
 
         //Linking
         //    .openURL(evt.data)
         //    .catch(err => console.error('An error occured', err));
-    }}
+    }
+
+    onTestGoBack() {
+        this.props.navigation.state.params.onScanQrCallback("Test 123");
+        this.props.navigation.goBack();
+    }
+}
 
 const styles = StyleSheet.create({
     container: {

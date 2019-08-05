@@ -6,6 +6,9 @@ import {
     Dimensions,
     TouchableOpacity
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import * as RNFS from 'react-native-fs';
+
 //import RNCamera from 'react-native-camera';
 //import { RNCamera } from 'react-native-camera';
 import { RNCamera } from 'react-native-camera';
@@ -40,6 +43,9 @@ const moveAttachment = async (filePath, newFilepath) => {
     });
 };
 
+// https://medium.com/@masochist.aman/capturing-images-with-react-native-203e24f93eb9
+// Reference: https://gist.github.com/amanthegreatone/5ec607b50074e4fa0d929dbf3245e9f6
+
 class CaptureScreen extends React.Component {
 
     constructor(props) {
@@ -68,6 +74,49 @@ class CaptureScreen extends React.Component {
         this.setState({ orientation });
     };
 
+    render() {
+        return (
+            <View style={{ flex: 1 }}>
+                <StatusBar barStyle="light-content" translucent />
+
+                <RNCamera
+                    //captureTarget={RNCamera.constants.CaptureTarget.disk}
+                    //aspect={RNCamera.constants.Aspect.fill}
+                    ref={this.cameraRef}
+                    style={styles.container}
+                    orientation="auto"
+                >
+                    <View
+                        style={this.state.orientation === 'Portrait' ?
+                            styles.buttonContainerPortrait :
+                            styles.buttonContainerLandscape
+                        }
+                    >
+                        <TouchableOpacity
+                            onPress={() => this.takePicture()}
+                            style={this.state.orientation === 'Portrait' ?
+                                styles.buttonPortrait :
+                                styles.buttonLandscape
+                            }
+                        >
+                            <Icon name="camera" style={{ fontSize: 40, color: 'white' }} />
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => this.props.navigation.goBack()}
+                            style={this.state.orientation === 'Portrait' ?
+                                styles.buttonPortrait :
+                                styles.buttonLandscape
+                            }
+                        >
+                            <Icon name="close-circle" style={{ fontSize: 40, color: 'white' }} />
+                        </TouchableOpacity>
+                    </View>
+                </RNCamera>
+            </View>
+        );
+    }
+
     // ************************** Capture and Save Image *************************
 
     async saveImage(filePath) {
@@ -84,68 +133,19 @@ class CaptureScreen extends React.Component {
     }
 
     takePicture() {
-
         if (!this.cameraRef.current) return;
 
-        const options = { quality: 0.5, base64: true };
-        this.cameraRef.current.takePictureAsync(options)
+        //const options = { quality: 0.5, base64: true };
+
+        this.cameraRef.current.takePictureAsync() // options
             .then(data => {
                 console.log('takePicture', data);
+                // this.saveImage(data.uri);
+                // Skip saveImage for now
+
+                this.props.navigation.state.params.onTakePictureCallback(data.uri);
+                this.props.navigation.goBack();
             });
-    }
-
-    render() {
-        return (
-            <View style={{ flex: 1 }}>
-                <StatusBar barStyle="light-content" translucent />
-
-                <RNCamera
-                    //captureTarget={RNCamera.constants.CaptureTarget.disk}
-                    //aspect={RNCamera.constants.Aspect.fill}
-                    ref={this.cameraRef}
-                    style={styles.container}
-                    orientation="auto"
-                >
-                    <View
-                        style={
-                            this.state.orientation === 'Portrait' ? (
-                                styles.buttonContainerPortrait
-                            ) : (
-                                    styles.buttonContainerLandscape
-                                )
-                        }
-                    >
-                        <TouchableOpacity
-                            onPress={() => this.takePicture()}
-                            style={
-                                this.state.orientation === 'Portrait' ? (
-                                    styles.buttonPortrait
-                                ) : (
-                                        styles.buttonLandscape
-                                    )
-                            }
-                        >
-                            <Icon name="camera" style={{ fontSize: 40, color: 'white' }} />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => this.props.navigation.goBack()}
-                            style={
-                                this.state.orientation === 'Portrait' ? (
-                                    styles.buttonPortrait
-                                ) : (
-                                        styles.buttonLandscape
-                                    )
-                            }
-                        >
-                            <Icon
-                                name="close-circle"
-                                style={{ fontSize: 40, color: 'white' }}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </RNCamera>
-            </View>
-        );
     }
 }
 
