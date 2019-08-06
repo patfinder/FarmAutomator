@@ -10,7 +10,6 @@ import settings from '../settings';
 //import { Button } from '../components/common';
 import { Switch } from 'react-native-gesture-handler';
 
-
 import {
     Container, Header, Footer, FooterTab, Content,
     Left, Right, Body, List,
@@ -20,6 +19,8 @@ import {
 } from "native-base";
 
 import { Grid, Row, Col } from "react-native-easy-grid";
+
+import QualtityInput from './Shared/QuantityInput';
 
 const datas = [
     "Simon Mignolet",
@@ -42,7 +43,7 @@ class ActionScreen extends React.Component {
             cattleId: null,
             feedId: null,
             feedType: null,
-            quantity: 0,
+            quantity: '',
 
 
             listViewData: datas
@@ -140,13 +141,13 @@ class ActionScreen extends React.Component {
                         </Segment>
 
                         {/* Qualtity */}
-                        <TextInput
+                        <QualtityInput
                             style={styles.textInput}
                             placeholder={i18n.t('action.quantity_placeholder')}
                             maxLength={40}
                             onBlur={Keyboard.dismiss}
-                            value={this.state.quantity.toString()}
-                            onChangeText={this.onQuantityChange}
+                            value={this.state.quantity}
+                            onQuantityChange={this.onQuantityChange}
                         />
 
                         {/* Scan List */}
@@ -196,7 +197,7 @@ class ActionScreen extends React.Component {
     }
 
     onQuantityChange(val) {
-        if (!isNaN(val)) this.setState({ quantity: val.trim() });
+        this.setState({ quantity: val.trim() });
     }
 
     deleteRow(secId, rowId, rowMap) {

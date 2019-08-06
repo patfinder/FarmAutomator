@@ -21,7 +21,7 @@ import { Grid, Row, Col } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/Feather';
 import i18n from '../i18n';
 
-import QRCodeScanner from 'react-native-qrcode-scanner';
+import QualtityInput from './Shared/QuantityInput';
 
 class ActionDetailsScreen extends React.Component {
 
@@ -30,14 +30,19 @@ class ActionDetailsScreen extends React.Component {
 
         this.state = {
             qr: '',
+            quantitty: '',
             picturePaths: [],
         };
 
         this.onScanQr = this.onScanQr.bind(this);
         this.onScanQrCallback = this.onScanQrCallback.bind(this);
+        this.onQuantityChange = this.onQuantityChange.bind(this);
+
         this.onTakePicture = this.onTakePicture.bind(this);
         this.onTakePictureCallback = this.onTakePictureCallback.bind(this);
         this.onRemovePicture = this.onRemovePicture.bind(this);
+
+        this.onGoBack = this.onGoBack.bind(this);
     }
 
     render() {
@@ -52,35 +57,47 @@ class ActionDetailsScreen extends React.Component {
                     <Right />
                 </Header>
                 
-                <Content>
-                    <TextInput
+                <Content style={{ margin: 10 }}>
+
+                    {/* Scan QR */}
+                    <View style={styles.row}>
+                        <TextInput
+                            style={styles.textInput}
+                            placeholder='QR Code'
+                            maxLength={40}
+                            value={this.state.qr}
+                            onChangeText={(val) => this.setState({qr: val})}
+                        />
+
+                        <Button style={styles.button} onPress={this.onScanQr}><Text>Scan QR</Text></Button>
+                    </View>
+
+                    {/* Qualtity */}
+                    <QualtityInput
                         style={styles.textInput}
-                        placeholder='QR Code'
+                        placeholder={i18n.t('action.quantity_placeholder')}
                         maxLength={40}
-                        value={this.state.qr}
-                        onChangeText={(val) => this.setState({qr: val})}
+                        onBlur={Keyboard.dismiss}
+                        value={this.state.quantity}
+                        onQuantityChange={this.onQuantityChange}
                     />
 
-                    <Button onPress={this.onScanQr}><Text>Scan QR</Text></Button>
-
+                    {/* Picture */}
                     {this.state.picturePaths.map((picturePath, index) => (
                         <Card>
                             <CardItem cardBody>
                                 <Image key={picturePath} source={{ uri: picturePath }} style={{ height: 200, width: null, flex: 1 }} />
                             </CardItem>
                             <CardItem>
-                                <Button onPress={() => this.onRemovePicture(index)}><Text>Remove</Text></Button>
+                                <Button style={styles.button} onPress={() => this.onRemovePicture(index)}><Text>Remove</Text></Button>
                             </CardItem>
                         </Card>
                     ))}
 
-                    <View style={{
-                        display: 'flex', margin: 10,
-                        flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        <Button onPress={this.onTakePicture} style={{ width: 100 }}><Text>Take Picture</Text></Button>
+                    <View style={styles.row}>
+                        <Button style={styles.button} onPress={this.onTakePicture} ><Text>Take Picture</Text></Button>
                         <Text style={{margin: 10}}></Text>
-                        <Button onPress={this.onTakePicture} style={{ width: 100 }}><Text>Done</Text></Button>
+                        <Button style={styles.button} onPress={this.onTakePicture} ><Text>Done</Text></Button>
                     </View>
 
                 </Content>
@@ -88,6 +105,7 @@ class ActionDetailsScreen extends React.Component {
         );
     }
 
+    // QR
     onScanQr(evt) {
         this.props.navigation.navigate('ScanQr', { onScanQrCallback: this.onScanQrCallback });
     }
@@ -96,6 +114,12 @@ class ActionDetailsScreen extends React.Component {
         this.setState({ qr });
     }
 
+    // Quantity
+    onQuantityChange(val) {
+        this.setState({ quantity: val.trim() });
+    }
+
+    // Picture
     onTakePicture(evt) {
         this.props.navigation.navigate('TakePicture', { onTakePictureCallback: this.onTakePictureCallback });
     }
@@ -109,13 +133,40 @@ class ActionDetailsScreen extends React.Component {
         pics.splice(index, 1);
         this.setState({ picturePaths: [...pics] });
     }
+
+    // Done
+    onGoBack() {
+
+        var errors = [];
+
+        // Validate
+        if (!this.state.qr) errors.push("Please scan QR");
+
+        if (!this.state.quantitty) errors.push("Please input quantity");
+
+        if (errors.length) {
+            Alert.alert(errors.join('\r\n'));
+            return;
+        }
+
+        this.props.navigation.state.params.onScanQrCallback(this.);
+        this.props.navigation.goBack();
+    }
 }
 
 const styles = StyleSheet.create({
     container: {
+        display: 'flex',
         flex: 1,
         justifyContent: 'flex-start',
-        alignItems: 'stretch'
+        alignItems: 'stretch',
+    },
+    row: {
+        display: 'flex',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     textInput: {
         borderColor: '#CCCCCC',
@@ -125,8 +176,11 @@ const styles = StyleSheet.create({
         width: '80%',
         fontSize: 25,
         paddingLeft: 20,
-        paddingRight: 20
+        paddingRight: 20,
     },
+    button: {
+        width: 100,
+    }
 });
 
 export default ActionDetailsScreen;
