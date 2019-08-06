@@ -28,6 +28,10 @@ const datas = [
     "Dejan Lovren",
 ];
 
+
+/**
+ * This screen allow user to input data for a user do action (feed, give medicine) to a set of cage.
+ * */
 class ActionScreen extends React.Component {
 
     constructor(props) {
@@ -53,6 +57,7 @@ class ActionScreen extends React.Component {
         this.onQuantityChange = this.onQuantityChange.bind(this);
         this.deleteRow = this.deleteRow.bind(this);
         this.onScanCage = this.onScanCage.bind(this);
+        this.onScanCageCallback = this.onScanCageCallback.bind(this);
     }
 
     componentDidMount() {
@@ -210,6 +215,12 @@ class ActionScreen extends React.Component {
 
     onScanCage() {
         this.props.navigation.navigate('ActionDetails');
+    }
+
+    onScanCageCallback() {
+
+
+        this.setState({});
     }
 }
 

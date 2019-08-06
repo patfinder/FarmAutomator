@@ -23,6 +23,9 @@ import i18n from '../i18n';
 
 import QualtityInput from './Shared/QuantityInput';
 
+/**
+ * This screen allow user to go to a cage, scan QR code, input quantity and capture pictures.
+ * */
 class ActionDetailsScreen extends React.Component {
 
     constructor(props) {
