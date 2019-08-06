@@ -74,7 +74,14 @@ class ActionDetailsScreen extends React.Component {
                         </Card>
                     ))}
 
-                    <Button onPress={this.onTakePicture}><Text>Take Picture</Text></Button>
+                    <View style={{
+                        display: 'flex', margin: 10,
+                        flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
+                    }}>
+                        <Button onPress={this.onTakePicture} style={{ width: 100 }}><Text>Take Picture</Text></Button>
+                        <Text style={{margin: 10}}></Text>
+                        <Button onPress={this.onTakePicture} style={{ width: 100 }}><Text>Done</Text></Button>
+                    </View>
 
                 </Content>
             </Container>
