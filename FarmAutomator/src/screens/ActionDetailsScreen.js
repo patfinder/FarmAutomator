@@ -33,7 +33,7 @@ class ActionDetailsScreen extends React.Component {
 
         this.state = {
             qr: '',
-            quantitty: '',
+            quantity: this.props.navigation.state.params.quantity,
             picturePaths: [],
         };
 
@@ -87,7 +87,7 @@ class ActionDetailsScreen extends React.Component {
 
                     {/* Picture */}
                     {this.state.picturePaths.map((picturePath, index) => (
-                        <Card>
+                        <Card key={index}>
                             <CardItem cardBody>
                                 <Image key={picturePath} source={{ uri: picturePath }} style={{ height: 200, width: null, flex: 1 }} />
                             </CardItem>
@@ -100,7 +100,7 @@ class ActionDetailsScreen extends React.Component {
                     <View style={styles.row}>
                         <Button style={styles.button} onPress={this.onTakePicture} ><Text>Take Picture</Text></Button>
                         <Text style={{margin: 10}}></Text>
-                        <Button style={styles.button} onPress={this.onTakePicture} ><Text>Done</Text></Button>
+                        <Button style={styles.button} onPress={this.onGoBack} ><Text>Done</Text></Button>
                     </View>
 
                 </Content>
@@ -132,9 +132,9 @@ class ActionDetailsScreen extends React.Component {
     }
 
     onRemovePicture(index) {
-        var pics = [...this.state.picturePaths];
-        pics.splice(index, 1);
-        this.setState({ picturePaths: [...pics] });
+        var picturePaths = [...this.state.picturePaths];
+        picturePaths.splice(index, 1);
+        this.setState({ picturePaths });
     }
 
     // Done
@@ -145,14 +145,16 @@ class ActionDetailsScreen extends React.Component {
         // Validate
         if (!this.state.qr) errors.push("Please scan QR");
 
-        if (!this.state.quantitty) errors.push("Please input quantity");
+        if (!this.state.quantity) errors.push("Please input quantity");
+
+        if (this.state.picturePaths.length <= 0) errors.push("Please capture one picture or more");
 
         if (errors.length) {
             Alert.alert(errors.join('\r\n'));
             return;
         }
 
-        this.props.navigation.state.params.onScanQrCallback(this.);
+        this.props.navigation.state.params.onScanCageCallback({...this.state});
         this.props.navigation.goBack();
     }
 }

@@ -7,7 +7,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import * as RNFS from 'react-native-fs';
+import RNFS from 'react-native-fs';
 
 //import RNCamera from 'react-native-camera';
 //import { RNCamera } from 'react-native-camera';
@@ -109,7 +109,7 @@ class CaptureScreen extends React.Component {
                                 styles.buttonLandscape
                             }
                         >
-                            <Icon name="close-circle" style={{ fontSize: 40, color: 'white' }} />
+                            <Icon name="window-close" style={{ fontSize: 40, color: 'white' }} />
                         </TouchableOpacity>
                     </View>
                 </RNCamera>
