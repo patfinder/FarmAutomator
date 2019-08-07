@@ -26,6 +26,7 @@ import {
 
 import QualtityInput from './Shared/QuantityInput';
 import { file } from '@babel/types';
+import { API } from '../const';
 
 /**
  * This screen allow user to input data for a user do action (feed, give medicine) to a set of cage.
@@ -47,7 +48,8 @@ class ActionScreen extends React.Component {
             feedType: null,
             quantity: '',
 
-            cages: [], // {qr, quantity, picturePaths}
+            // cage: {qr, quantity, picturePaths}
+            cages: [], 
         };
 
         // Common
@@ -204,14 +206,6 @@ class ActionScreen extends React.Component {
         this.setState({ quantity: val.trim() });
     }
 
-    //deleteRow(secId, rowId, rowMap) {
-    //    // TODO: delete
-    //    rowMap[`${secId}${rowId}`].props.closeRow();
-    //    const newData = [...this.state.listViewData];
-    //    newData.splice(rowId, 1);
-    //    this.setState({ listViewData: newData });
-    //}
-
     // ================================================================================
     // Cage
 
@@ -233,10 +227,16 @@ class ActionScreen extends React.Component {
     // ================================================================================
     // Complete Task
 
+    /**
+     * Start uploading process.
+     * */
     onCompleteTask() {
 
         var { cattleId, feedId, feedType, quantity, } = { ...this.state }; // task
-        var task = { CattleId: cattleId, FeedId: feedId, FeedType: feedType, Quantity: parseFloat(quantity) }; // TODO: UserId
+        var task = {
+            CattleId: cattleId, FeedId: feedId, FeedType: feedType, 
+            ActionTime: new Date(), Quantity: parseFloat(quantity)
+        };
 
         var cages = [...this.state.cages];
 
@@ -250,14 +250,22 @@ class ActionScreen extends React.Component {
             .then(res => {
                 return res.json();
             })
-            .then(() => {
-                return Promise.all(cages.map(cage => this.uploadCage(cage)));
+            .then((res) => {
+
+                if (res.resultCode === API.RESULT_CODE.SUCCESS) {
+                    return Promise.all(cages.map(cage => this.uploadCage(cage)));
+                }
+                throw res;
             }) 
             .catch(error => {
                 Alert.alert('onCompleteTask Error', JSON.stringify(error));
             })
     }
 
+    /**
+     * Upload cages data (qr, quantity, pictures) for one cage.
+     * @param {{qr, quantity, picturePaths}} cage
+     */
     uploadCage(cage) {
 
         var formData = new FormData();
@@ -280,13 +288,76 @@ class ActionScreen extends React.Component {
                     mode: 'cors',
                     credentials: 'include',
                     body: formData,
-                    //headers: { 'Content-Type': 'application/json' },
                 })
                 .then(res => console.warn('uploadCage fetch DONE.', res))
                 .catch(error => {
                     Alert.alert('uploadCage Error', JSON.stringify(error));
                 });
         });
+    }
+
+    /**
+     * Upload cages data (qr, quantity, pictures) for one cage.
+     * @param {{qr, quantity, picturePaths}} cage
+     */
+    uploadCage2(cage) {
+
+        // TODO: not working for now.
+        // REF: https://github.com/itinance/react-native-fs#file-upload-android-and-ios-only
+
+        var files = cage.picturePaths.map((path, index) => {
+            var dd = index + 1;
+            dd = (dd <= 9 ? '0' : '') + dd.toString();
+            var name = `Picture-${dd}.jpg`;
+
+            return {
+                name,
+                filename: name,
+                filepath: path,
+                filetype: 'image/jpeg' // ?
+            };
+        });
+
+        function uploadBegin(response) {
+            var jobId = response.jobId;
+            console.log('UPLOAD HAS BEGUN! JobId: ' + jobId);
+        };
+
+        function uploadProgress(response) {
+            var percentage = Math.floor((response.totalBytesSent / response.totalBytesExpectedToSend) * 100);
+            console.log('UPLOAD IS ' + percentage + '% DONE!');
+        };
+
+        var url = `${settings.API.API_ROOT}${settings.API.ACTION.UPLOAD_CAGE}`;
+
+        return RNFS.uploadFiles({
+            toUrl: url,
+            files: files,
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+            },
+            fields: {
+                Qr: cage.qr,
+                Quantity: cage.quantity,
+            },
+            begin: uploadBegin,
+            progress: uploadProgress
+        })
+            .promise
+            .then((response) => {
+                if (response.statusCode == 200) {
+                    console.log('FILES UPLOADED!'); // response.statusCode, response.headers, response.body
+                } else {
+                    console.log('SERVER ERROR');
+                }
+            })
+            .catch((err) => {
+                if (err.description === "cancelled") {
+                    // cancelled by user
+                }
+                console.log(err);
+            });
     }
 }
 

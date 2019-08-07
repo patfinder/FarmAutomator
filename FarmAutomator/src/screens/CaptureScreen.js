@@ -15,7 +15,7 @@ import { RNCamera } from 'react-native-camera';
 
 //import { Icon } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { dirPicutures } from './dirStorage';
+import { dirPictures } from './dirStorage';
 const moment = require('moment');
 
 let { height, width } = Dimensions.get('window');
@@ -24,7 +24,7 @@ let orientation = height > width ? 'Portrait' : 'Landscape';
 //move the attachment to app folder
 const moveAttachment = async (filePath, newFilepath) => {
     return new Promise((resolve, reject) => {
-        RNFS.mkdir(dirPicutures)
+        RNFS.mkdir(dirPictures)
             .then(() => {
                 RNFS.moveFile(filePath, newFilepath)
                     .then(() => {
@@ -121,14 +121,19 @@ class CaptureScreen extends React.Component {
 
     async saveImage(filePath) {
         try {
+
             // set new image name and filepath
-            const newImageName = `${moment().format('DDMMYY_HHmmSSS')}.jpg`;
-            const newFilepath = `${dirPicutures}/${newImageName}`;
+            const newFileName = `${moment().format('DDMMYY_HHmmSSS')}.jpg`;
+            const newFilePath = `${dirPictures}/${newFileName}`;
             // move and save image to new filepath
-            const imageMoved = await moveAttachment(filePath, newFilepath);
+            const imageMoved = await moveAttachment(filePath, newFilePath);
             console.log('image moved', imageMoved);
+
+            return { name: newFileName, path: newFilePath };
+
         } catch (error) {
             console.log(error);
+            throw error;
         }
     }
 
@@ -138,12 +143,12 @@ class CaptureScreen extends React.Component {
         //const options = { quality: 0.5, base64: true };
 
         this.cameraRef.current.takePictureAsync() // options
-            .then(data => {
+            .then(async data => {
                 console.log('takePicture', data);
-                // this.saveImage(data.uri);
                 // Skip saveImage for now
+                var newFile = await this.saveImage(data.uri);
 
-                this.props.navigation.state.params.onTakePictureCallback(data.uri);
+                this.props.navigation.state.params.onTakePictureCallback(newFile.path);
                 this.props.navigation.goBack();
             });
     }

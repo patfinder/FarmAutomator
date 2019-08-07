@@ -1,7 +1,7 @@
 
-const ACTIONS = {
-    SCAN: {
-        ADD: 'ACTIONS.SCAN.ADD',
-        DELETE: 'ACTIONS.SCAN.DELETE',
+export const API = {
+    RESULT_CODE: {
+        SUCCESS: 'Success',
+        UNAUTHENTICATED: 'Unauthenticated',
     }
 };
