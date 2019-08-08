@@ -120,6 +120,8 @@ class ActionScreen extends React.Component {
                             selectedValue={this.state.cattleId}
                             onValueChange={(val) => this.setState({ cattleId: val })}
                         >
+                            <Picker.Item label='Please select'/>
+
                             {cattles.map(cattle => <Picker.Item key={cattle.id} label={cattle.name} value={cattle.id} />)}
                         </Picker>
 
@@ -134,6 +136,8 @@ class ActionScreen extends React.Component {
                             selectedValue={this.state.feedId}
                             onValueChange={(val) => this.setState({ feedId: val })}
                         >
+                            <Picker.Item label='Please select' />
+
                             {feeds.map(feed => <Item key={feed.id} label={feed.name} value={feed.id} />)}
                         </Picker>
 
@@ -196,7 +200,7 @@ class ActionScreen extends React.Component {
     toggleFeedType() {
         try {
             var index = 1 - this.state.feedTypes.indexOf(this.state.feedType);
-            this.setState({ feedType: this.state.feedTypes[index] });
+            this.setState({ feedType: this.state.feedTypes[index], cages: [] });
         }
         catch (error) {
             console.log('toggleFeedType', error);

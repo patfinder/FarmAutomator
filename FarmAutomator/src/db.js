@@ -1,7 +1,7 @@
 import SQLite from 'react-native-sqlite-storage';
 import { DATABASE } from './const';
 
-export class Database {
+export default class Database {
     constructor() {
         this._database = undefined;
     }
@@ -69,4 +69,3 @@ export class Database {
             .then(db => db.executeSql(sql));
     }
 }
-

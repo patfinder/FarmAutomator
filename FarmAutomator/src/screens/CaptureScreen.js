@@ -15,7 +15,7 @@ import { RNCamera } from 'react-native-camera';
 
 //import { Icon } from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { dirPictures } from './dirStorage';
+import { dirPictures, dirHome } from './dirStorage';
 const moment = require('moment');
 
 let { height, width } = Dimensions.get('window');
@@ -24,7 +24,11 @@ let orientation = height > width ? 'Portrait' : 'Landscape';
 //move the attachment to app folder
 const moveAttachment = async (filePath, newFilepath) => {
     return new Promise((resolve, reject) => {
-        RNFS.mkdir(dirPictures)
+
+        console.log('moveAttachment', { dirPictures });
+
+        RNFS.mkdir(dirHome)
+            .then(() => RNFS.mkdir(dirPictures))
             .then(() => {
                 RNFS.moveFile(filePath, newFilepath)
                     .then(() => {
