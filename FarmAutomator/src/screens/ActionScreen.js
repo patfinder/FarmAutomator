@@ -47,6 +47,7 @@ class ActionScreen extends React.Component {
             feedId: null,
             feedType: null,
             quantity: '',
+            //actionTime: null,
 
             // cage: {qr, quantity, picturePaths}
             cages: [], 

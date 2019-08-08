@@ -3,6 +3,7 @@ package com.blitzreading;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import org.pgsqlite.SQLitePluginPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.rnfs.RNFSPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -28,6 +29,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new SQLitePluginPackage(),
             new RNCameraPackage(),
             new RNFSPackage(),
             new AsyncStoragePackage(),

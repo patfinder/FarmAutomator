@@ -5,3 +5,7 @@ export const API = {
         UNAUTHENTICATED: 'Unauthenticated',
     }
 };
+
+export const DATABASE = {
+    FILE_NAME: "farmautomator.sqlite",
+};
