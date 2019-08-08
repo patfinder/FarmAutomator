@@ -149,10 +149,11 @@ class CaptureScreen extends React.Component {
         this.cameraRef.current.takePictureAsync() // options
             .then(async data => {
                 console.log('takePicture', data);
-                // Skip saveImage for now
-                var newFile = await this.saveImage(data.uri);
+                // TODO: Skip saveImage for now
+                //var newFile = await this.saveImage(data.uri);
+                //this.props.navigation.state.params.onTakePictureCallback(newFile.path);
 
-                this.props.navigation.state.params.onTakePictureCallback(newFile.path);
+                this.props.navigation.state.params.onTakePictureCallback(data.uri);
                 this.props.navigation.goBack();
             });
     }
