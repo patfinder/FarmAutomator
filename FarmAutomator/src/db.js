@@ -115,11 +115,11 @@ export default class Database {
     }
 
     /**
-     * Get un-uploaded actions with
+     * Get un-uploaded actions with un-uploaded childs
      * */
     getUnuploadedActions() {
         return this.database
-            .then(db => new Promise((resolve, reject) => {
+            .then(db => new Promise((resolve) => {
                 let [result] = await db.executeSql(
                     `SELECT * FROM Action WHERE Status <> ?`,
                     [ACTION.STATUS.UPLOADED]);
