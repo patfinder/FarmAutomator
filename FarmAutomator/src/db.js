@@ -1,5 +1,5 @@
 import SQLite from 'react-native-sqlite-storage';
-import { DATABASE } from './const';
+import { DATABASE, ACTION } from './const';
 
 export default class Database {
     constructor() {
@@ -64,8 +64,121 @@ export default class Database {
         transaction.executeSql(`CREATE TABLE IF NOT EXISTS "CageScan" ( scanId INTEGER, qr TEXT, quantity REAL, picturePaths TEXT, PRIMARY KEY(scanId) );`);
     }
 
-    executeSql(sql) {
+    executeSql(sql, params = []) {
         return this.database
-            .then(db => db.executeSql(sql));
+            .then(db => db.executeSql(sql, params));
+    }
+
+    /**
+     * Save action to db
+     * @param {{ cattleId, feedId, feedType, quantity, actionTime }} action
+     * @returns {Number} saved actionId
+     */
+    saveAction(action) {
+        var { cattleId, feedId, feedType, quantity, actionTime } = action;
+
+        return this.database
+            .then(db => new Promise((resolve, reject) => {
+                try {
+                    let [results] = await db.executeSql(`
+                        INSERT INTO 
+                            Action(cattleId, feedId, feedType, quantity, actionTime) VALUES(?, ?, ?, ?, ?);`,
+                        [cattleId, feedId, feedType, quantity, actionTime]);
+
+                    console.log('saveAction INSERT Action result: ', results);
+
+                    if (results.insertId) {
+                        resolve(results.insertId);
+                    }
+
+                    throw "Failed to insert Action";
+                }
+                catch (error) {
+                    reject(error);
+                }
+            }));
+    }
+
+    resultToObjects(result) {
+
+        if (result === undefined) {
+            return [];
+        }
+
+        const count = result.rows.length;
+        const objs = [];
+
+        for (let i = 0; i < count; i++) {
+            const obj = result.rows.item(i);
+            objs.push(obj);
+        }
+    }
+
+    /**
+     * Get un-uploaded actions with
+     * */
+    getUnuploadedActions() {
+        return this.database
+            .then(db => new Promise((resolve, reject) => {
+                let [result] = await db.executeSql(
+                    `SELECT * FROM Action WHERE Status <> ?`,
+                    [ACTION.STATUS.UPLOADED]);
+
+                const actions = this.resultToObjects(result);
+
+                // Retrieve cage scan
+                actions.map((action) => {
+                    var [result2] = await db.executeSql(`SELECT * FROM CageScan WHERE actionId = ? and Status <> ?`, [action.actionId, ACTION.STATUS.UPLOADED]);
+                    action.cages = this.resultToObjects(result2);
+                })
+
+                resolve(actions);
+            }));
+    }
+
+    /**
+     * Update action status
+     * @param {any} actionId
+     * @param {any} status
+     */
+    updateActionStatus(actionId, status) {
+        return this.database
+            .then(db => db.executeSql(`UPDATE Action SET Status = ? WHERE actionId = ?;`, [status, actionId]));
+    }
+
+    /**
+     * Save cage scan to db
+     * @param {{actionId, qr, quantity, picturePaths}} cage cage info
+     */
+    saveCage(cage) {
+
+        var { actionId, qr, quantity, picturePaths } = cage;
+        return this.database
+            .then(db => new Promise((resolve, reject) => {
+                try {
+                    picturePaths = JSON.stringify(picturePaths || []);
+                    let [results] = this.database.executeSql(`INSERT INTO CageScan(actionId, qr, quantity, picturePaths) VALUES (?, ?, ?, ?);`,
+                        [actionId, qr, quantity, picturePaths]);
+
+                    if (results.insertId) {
+                        resolve(results.insertId);
+                    }
+
+                    throw `Failed to insert Cage Scan ${qr}`;
+                }
+                catch (error) {
+                    reject(error);
+                }
+            }));
+    }
+
+    /**
+     * Upsate cage scan status
+     * @param {any} scanId scanId. This Id is specific for this cage, in this action.
+     * @param {any} status scan status
+     */
+    updateCageStatus(scanId, status) {
+        return this.database
+            .then(db => db.executeSql(`UPDATE CageScan SET Status = ? WHERE scanId = ?;`, [status, scanId]));
     }
 }

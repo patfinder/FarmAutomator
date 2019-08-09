@@ -8,6 +8,10 @@ import {
 import RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/Feather';
 import i18n from '../i18n';
+import Database from '../db';
+import stringUtils from '../libs/stringUtils';
+
+
 import settings from '../settings';
 //import { Button } from '../components/common';
 import { Switch } from 'react-native-gesture-handler';
@@ -24,9 +28,9 @@ import {
 
 //import { Grid, Row, Col } from "react-native-easy-grid";
 
-import QualtityInput from './Shared/QuantityInput';
-import { file } from '@babel/types';
+import QualtityInput from '../components/QuantityInput';
 import { API } from '../const';
+import { toCapitalizeObject } from '../libs/langUtils';
 
 /**
  * This screen allow user to input data for a user do action (feed, give medicine) to a set of cage.
@@ -43,6 +47,7 @@ class ActionScreen extends React.Component {
             feedTypes: null,
             feeds: null,
 
+            // actionId: save on client
             cattleId: null,
             feedId: null,
             feedType: null,
@@ -63,6 +68,7 @@ class ActionScreen extends React.Component {
         this.onRemoveCage = this.onRemoveCage.bind(this);
 
         // Complete
+        this.saveAction = this.saveAction.bind(this);
         this.onCompleteTask = this.onCompleteTask.bind(this);
         this.uploadCage = this.uploadCage.bind(this);
     }
@@ -237,26 +243,42 @@ class ActionScreen extends React.Component {
      * */
     onCompleteTask() {
 
-        var { cattleId, feedId, feedType, quantity, } = { ...this.state }; // task
-        var task = {
-            CattleId: cattleId, FeedId: feedId, FeedType: feedType, 
-            ActionTime: new Date(), Quantity: parseFloat(quantity)
-        };
+        var { cattleId, feedId, feedType, quantity } = { ...this.state }; // task
+        quantity = parseFloat(quantity);
+        actionTime = new Date();
 
         var cages = [...this.state.cages];
+        var action = { cattleId, feedId, feedType, quantity, actionTime };
+
+        var db = new Database();
+
+        // Save action and cage scans
+        var actionId = await db.saveAction(action)
+            .catch(error => {
+                Alert.alert('Failed to save Action and Cage scans', JSON.stringify(error));
+                throw error;
+            });
+
+        // Save cage scans
+        await Promise.all(cages.map(cage => new Promise(resolve => {
+            var cageId = await db.saveCage({ actionId, ...cage });
+            resolve(cage.cageId = cageId);
+        })));
 
         fetch(`${settings.API.API_ROOT}${settings.API.ACTION.UPLOAD_TASK}`, {
             method: 'POST',
             mode: 'cors',
             credentials: 'include',
-            data: task,
+            data: toCapitalizedObject({ actionId, cattleId, feedId, feedType, quantity, actionTime}),
             headers: { 'Content-Type': 'application/json' },
         })
             .then(res => {
+
+                // Update status
+
                 return res.json();
             })
             .then((res) => {
-
                 if (res.resultCode === API.RESULT_CODE.SUCCESS) {
                     return Promise.all(cages.map(cage => this.uploadCage(cage)));
                 }

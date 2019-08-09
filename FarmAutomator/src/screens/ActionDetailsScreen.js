@@ -21,7 +21,7 @@ import { Grid, Row, Col } from "react-native-easy-grid";
 import Icon from 'react-native-vector-icons/Feather';
 import i18n from '../i18n';
 
-import QualtityInput from './Shared/QuantityInput';
+import QualtityInput from '../components/QuantityInput';
 
 /**
  * This screen allow user to go to a cage, scan QR code, input quantity and capture pictures.
@@ -32,6 +32,7 @@ class ActionDetailsScreen extends React.Component {
         super(props);
 
         this.state = {
+            // actionId: null,
             qr: '',
             quantity: this.props.navigation.state.params.quantity,
             picturePaths: [],

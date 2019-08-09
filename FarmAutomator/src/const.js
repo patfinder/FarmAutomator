@@ -9,3 +9,12 @@ export const API = {
 export const DATABASE = {
     FILE_NAME: "farmautomator.sqlite",
 };
+
+export const ACTION = {
+    STATUS: {
+        NEW: 'new',
+        UPLOADED: 'uploaded',
+        FAILED: 'failed',
+        CANCELLED: 'cancelled',
+    }
+};
