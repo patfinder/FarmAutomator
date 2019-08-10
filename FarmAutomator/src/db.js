@@ -136,6 +136,51 @@ export default class Database {
             }));
     }
 
+    getUnuploadedActionsEx() {
+        return this.database
+            .then(db => new Promise((resolve) => {
+                let [result] = await db.executeSql(`
+                    SELECT a.actionId actionId, cattleId, feedId, feedType, a.quantity quantity, actionTime, a.status status, 
+                        scanId, qr, s.quantity s_quantity, picturePaths, s.status s_status 
+                        FROM Action a 
+                        INNER join CageScan s on a.actionId = s.actionId
+                        WHERE a.Status <> ? OR s.Status <> ?`,
+                    [ACTION.STATUS.UPLOADED, ACTION.STATUS.UPLOADED]);
+
+                const actionGroups = this.resultToObjects(result);
+
+                actionGroups.
+
+                resolve(actions);
+            }));
+    }
+
+
+    /**
+     * Group action into object of this shape:
+     * {[actionId]: {...action, scans[{...scan}]} }
+     * @param {any} actions
+     * @returns actions grouped by actionId
+     */
+    groupActions(actions) {
+        return actions.reduce(function (accu, cur) {
+
+            // action
+            var { actionId, cattleId, feedId, feedType, quantity, actionTime, status} = cur;
+            var action = { actionId, cattleId, feedId, feedType, quantity, actionTime, status };
+
+            // scan
+            var { scanId, qr, s_quantity, picturePaths, s_status} = cur;
+            var scan = { actionId, scanId, qr, quantity: s_quantity, picturePaths, status: s_status };
+
+            // group
+            if (accu[cur.actionId]) accu[cur.actionId].push(scan);
+            else accu[cur.actionId] = [scan];
+
+            return accu;
+        }, {});
+    }
+
     /**
      * Update action status
      * @param {any} actionId
