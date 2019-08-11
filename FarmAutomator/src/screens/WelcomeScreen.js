@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import i18n from '../i18n';
@@ -13,6 +13,7 @@ class WelcomeScreen extends React.Component {
         super(props);
 
         this.doTest = this.doTest.bind(this);
+        this.resetDb = this.resetDb.bind(this);
     }
 
     componentDidMount() {
@@ -37,6 +38,11 @@ class WelcomeScreen extends React.Component {
                     <Button onPress={this.doTest}>
                         <Icon2 name="warning" size={22} />
                     </Button>
+
+                    <Button onPress={this.resetDb}>
+                        <Icon2 name="ambulance" size={22} />
+                    </Button>
+
                 </View>
             </View>
         );
@@ -65,6 +71,15 @@ class WelcomeScreen extends React.Component {
 
             db.close();
         });
+    }
+
+    resetDb() {
+        var db = new Database();
+        db.removeTables()
+            .then(() => {
+                Alert.alert(null, 'Table removed');
+                db.close();
+            });
     }
 }
 

@@ -88,25 +88,26 @@ class LoginScreen extends React.Component {
             body: JSON.stringify(login)
         })
             .then(resp => {
+
+                console.log('LoginScreen.onLogin json', resp);
+
                 return Promise.all([resp, resp.json()]);
             })
             .then(([ resp, json ]) => {
 
-                setTimeout(() => null, 0);
+                //setTimeout(() => null, 0);
+                console.log('LoginScreen.onLogin json', json);
 
-                //resp.json(json => {
                 this.setState({ loading: false });
 
-                let cookies = resp.headers.get('set-cookie');
-                // Get .AspNet.auth-cookie value
-                let aspCookie = cookies.split(';').map(c => c.trim()).filter(c => c.indexOf('.AspNet.auth-cookie') === 0);
+                //let cookies = resp.headers.get('set-cookie');
+                //// Get .AspNet.auth-cookie value
+                //let aspCookie = cookies.split(';').map(c => c.trim()).filter(c => c.indexOf('.AspNet.auth-cookie') === 0);
 
-                if (!aspCookie) throw '.AspNet.auth-cookie not found!';
+                //if (!aspCookie) throw '.AspNet.auth-cookie not found!';
 
                 // Get cookie value
-                let authCookie = aspCookie[0].split('=')[1];
-
-                //Alert.alert('DEBUG. json', JSON.stringify({ authCookie, json }));
+                //let authCookie = aspCookie[0].split('=')[1];
 
                 // Success
                 if (json.resultCode !== 'Success') {
@@ -115,8 +116,8 @@ class LoginScreen extends React.Component {
                 }
 
                 // Store session token
-                let { id, name, role} = json.data;
-                global.loginInfo = { id, name, role, authCookie };
+                //let { id, name, role} = json.data;
+                //global.loginInfo = { id, name, role, authCookie };
 
                 //Alert.alert('Login success!');
                 this.props.navigation.navigate('Action')

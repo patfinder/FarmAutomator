@@ -19,11 +19,11 @@ export default class Database {
     /**
      * Open the connection to the database
      * */
-    open(){
+    open(initDb = true){
         //SQLite.DEBUG(true);
         SQLite.enablePromise(true);
 
-        cons.log('db.open db folder', { dirHome });
+        console.log('db.open db folder', { dirHome });
 
         return SQLite.openDatabase({
             name: DATABASE.FILE_NAME,
@@ -32,6 +32,8 @@ export default class Database {
             .then(db => {
                 this._database = db;
                 console.log("[db] Database open!");
+
+                if (!initDb) return this._database;
 
                 return this.initialize(this._database);
             })
@@ -60,12 +62,6 @@ export default class Database {
 
     createTables(transaction) {
 
-        const dropAllTables = true;
-        if (dropAllTables) {
-            transaction.executeSql("DROP TABLE IF EXISTS Action;");
-            transaction.executeSql("DROP TABLE IF EXISTS CageScan;");
-        }
-
         // Action table
         transaction.executeSql(`CREATE TABLE Action (
             actionId INTEGER, cattleId TEXT NOT NULL, feedId TEXT NOT NULL, feedType TEXT NOT NULL,
@@ -77,6 +73,16 @@ export default class Database {
             actionId INTEGER NOT NULL, scanId INTEGER, qr TEXT NOT NULL, quantity REAL NOT NULL,
             picturePaths TEXT NOT NULL, status TEXT NOT NULL, PRIMARY KEY(scanId) )
         WITHOUT ROWID;`);
+    }
+
+    removeTables() {
+        return this.open(false)
+            .then((db) => {
+                db.transaction((trans) => {
+                    trans.executeSql("DROP TABLE IF EXISTS Action;");
+                    trans.executeSql("DROP TABLE IF EXISTS CageScan;");
+                })
+            });
     }
 
     executeSql(sql, params = []) {

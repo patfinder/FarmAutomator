@@ -80,7 +80,14 @@ class ActionScreen extends React.Component {
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
         })
-            .then(res => res.json())
+            .then(res => {
+
+                console.log('ActionScreen.componentDidMount res: ', res);
+
+                if (res.status !== 200)  return Promise.reject(res);
+
+                return res.json();
+            })
             .then(res => {
 
                 var { data: { cattles, feedTypes, feeds } } = res;
@@ -253,7 +260,7 @@ class ActionScreen extends React.Component {
 
         // Save action and cage scans
         var actionId = await db.saveAction(action)
-            .ca tch(error => {
+            .catch(error => {
                 Alert.alert('Failed to save Action and Cage scans', JSON.stringify(error));
                 throw error;
             });
