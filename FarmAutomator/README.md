@@ -10,7 +10,3 @@ The jetifier AndroidX transition tool in npm format, with a react-native compati
 Fix Android X transition related issues, like "Failed to resolve: support-v4"
 
 # License
-
-[MIT](LICENSE)
-
-

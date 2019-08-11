@@ -68,7 +68,6 @@ class ActionScreen extends React.Component {
         this.onRemoveCage = this.onRemoveCage.bind(this);
 
         // Complete
-        this.saveAction = this.saveAction.bind(this);
         this.onCompleteTask = this.onCompleteTask.bind(this);
         this.uploadCage = this.uploadCage.bind(this);
     }
@@ -241,7 +240,7 @@ class ActionScreen extends React.Component {
     /**
      * Start uploading process.
      * */
-    onCompleteTask() {
+    async onCompleteTask() {
 
         var { cattleId, feedId, feedType, quantity } = { ...this.state }; // task
         quantity = parseFloat(quantity);
@@ -254,15 +253,15 @@ class ActionScreen extends React.Component {
 
         // Save action and cage scans
         var actionId = await db.saveAction(action)
-            .catch(error => {
+            .ca tch(error => {
                 Alert.alert('Failed to save Action and Cage scans', JSON.stringify(error));
                 throw error;
             });
 
         // Save cage scans
         await Promise.all(cages.map(cage => new Promise(resolve => {
-            var cageId = await db.saveCage({ actionId, ...cage });
-            resolve(cage.cageId = cageId);
+            db.saveCage({ actionId, ...cage })
+                .then(cageId => resolve(cage.cageId = cageId));
         })));
 
         fetch(`${settings.API.API_ROOT}${settings.API.ACTION.UPLOAD_TASK}`, {
