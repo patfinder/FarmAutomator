@@ -10,12 +10,6 @@ import settings from '../settings';
 import { Switch } from 'react-native-gesture-handler';
 import { Container, Header, Content, Accordion, Button, Segment } from "native-base";
 
-const dataArray = [
-    { title: "First Element", content: "Lorem ipsum dolor sit amet" },
-    { title: "Second Element", content: "Lorem ipsum dolor sit amet" },
-    { title: "Third Element", content: "Lorem ipsum dolor sit amet" }
-];
-
 class TestScreen extends React.Component {
 
     constructor(props) {
@@ -24,7 +18,7 @@ class TestScreen extends React.Component {
         this.state = {
         };
 
-        //this.onQuantityChange = this.onQuantityChange.bind(this);
+        this.onQuantityChange = this.onQuantityChange.bind(this);
     }
 
     componentDidMount() {
@@ -32,7 +26,11 @@ class TestScreen extends React.Component {
 
     render() {
         return (
-            null
+            <View style={styles.container}>
+                <Button style={{flex: 1}}>Button 1</Button>
+                <Button style={{flex: 2}}>Button 2</Button>
+                <Button style={{flex: 3}}>Button 3</Button>
+            </View>
         );
     }
 

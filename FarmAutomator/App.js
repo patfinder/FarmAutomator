@@ -26,6 +26,7 @@ import HighScoresScreen from './src/screens/HighScoresScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import SplashScreen from './src/screens/SplashScreen';
 import ActionDetailsScreen from './src/screens/ActionDetailsScreen';
+import TestScreen from './src/screens/TestScreen';
 
 const ActionNavigator = createStackNavigator({
     Action: ActionScreen,
@@ -35,6 +36,10 @@ const ActionNavigator = createStackNavigator({
 });
 
 const HomeNavigator = createSwitchNavigator({
+
+    // TODO: remove below line
+    TestScreen: TestScreen,
+
     Welcome: WelcomeScreen,
     Login: LoginScreen,
     Action: ActionNavigator,
@@ -46,7 +51,6 @@ const HomeNavigator = createSwitchNavigator({
 
 /* eslint-disable react/display-name */
 
-//const AppNavigator = createBottomTabNavigator(
 const AppNavigator = createBottomTabNavigator(
     {
         Home: {
