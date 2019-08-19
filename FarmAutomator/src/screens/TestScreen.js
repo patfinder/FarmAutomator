@@ -27,9 +27,12 @@ class TestScreen extends React.Component {
     render() {
         return (
             <View style={styles.container}>
-                <Button style={{flex: 1}}>Button 1</Button>
-                <Button style={{flex: 2}}>Button 2</Button>
-                <Button style={{flex: 3}}>Button 3</Button>
+                <Button style={{ flex: 1, color: 'red' }}>
+                    <Text>Hello 123</Text>
+                </Button>
+                <Button title='button 2' style={{flex: 2, color: 'red'}} />
+                <Button title='button 3' style={{flex: 3, color: 'red'}} />
+                <Text>Hello</Text>
             </View>
         );
     }

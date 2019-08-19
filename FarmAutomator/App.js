@@ -38,7 +38,7 @@ const ActionNavigator = createStackNavigator({
 const HomeNavigator = createSwitchNavigator({
 
     // TODO: remove below line
-    TestScreen: TestScreen,
+    //TestScreen: TestScreen,
 
     Welcome: WelcomeScreen,
     Login: LoginScreen,
